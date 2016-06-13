@@ -36,7 +36,7 @@ int8_t mpu6050_readBytes(uint8_t regAddr, uint8_t length, uint8_t *data) {
 		//request register
 		i2c_start(MPU6050_ADDR | I2C_WRITE);
 		i2c_write(regAddr);
-		_delay_us(10);
+		//_delay_us(10);
 		//read data
 		i2c_start(MPU6050_ADDR | I2C_READ);
 		for(i=0; i<length; i++) {
@@ -459,16 +459,16 @@ void mpu6050_init() {
 	#if MPU6050_I2CINIT == 1
 	//init i2c
 	i2c_init();
-	_delay_us(10);
+	//_delay_us(10);
 	#endif
 
 	//allow mpu6050 chip clocks to start up
-	_delay_ms(100);
+	//_delay_ms(100);
 
 	//set sleep disabled
 	mpu6050_setSleepDisabled();
 	//wake up delay needed sleep disabled
-	_delay_ms(10);
+	//_delay_ms(10);
 
 	//set clock source
 	//  it is highly recommended that the device be configured to use one of the gyroscopes (or an external clock source)
@@ -626,7 +626,7 @@ void mpu6050_updateQuaternion() {
 		mpu6050_readBit(MPU6050_RA_INT_STATUS, MPU6050_INTERRUPT_DATA_RDY_BIT, (uint8_t *)buffer);
 		if(buffer[0])
 			break;
-		_delay_us(10);
+		//_delay_us(10);
 	}
 
 	mpu6050_readBytes(MPU6050_RA_ACCEL_XOUT_H, 14, (uint8_t *)buffer);

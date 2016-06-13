@@ -2,7 +2,7 @@
 #define F_CPU 16000000UL
 #endif
 
-#define BAUD 9600 // baud rate
+#define BAUD 38400 // baud rate
 #define BAUDRATE ((F_CPU)/(BAUD*16UL)-1) // ubrr value
 
 #include <stdlib.h>
@@ -115,13 +115,13 @@ void mpu(int mode) {
 
 	//init mpu6050
 	mpu6050_init();
-	_delay_ms(50);
+	//_delay_ms(50);
 
 	//init mpu6050 dmp processor
 	#if MPU6050_GETATTITUDE == 2
-	mpu6050_dmpInitialize();
-	mpu6050_dmpEnable();
-	_delay_ms(10);
+	//mpu6050_dmpInitialize();
+	//mpu6050_dmpEnable();
+	//_delay_ms(10);
 	#endif
 
 	#if MPU6050_GETATTITUDE == 0
@@ -132,14 +132,14 @@ void mpu(int mode) {
 	#if MPU6050_GETATTITUDE == 1
 	mpu6050_getQuaternion(&qw, &qx, &qy, &qz);
 	mpu6050_getRollPitchYaw(&roll, &pitch, &yaw);
-	_delay_ms(10);
+	//_delay_ms(10);
 	#endif
 
 	#if MPU6050_GETATTITUDE == 2
 	if(mpu6050_getQuaternionWait(&qw, &qx, &qy, &qz)) {
 		mpu6050_getRollPitchYaw(qw, qx, qy, qz, &roll, &pitch, &yaw);
 	}
-	_delay_ms(10);
+	//_delay_ms(10);
 	#endif
 
 	#if MPU6050_GETATTITUDE == 0
@@ -152,7 +152,7 @@ void mpu(int mode) {
 	uarttransmit('+');
 	ltoa(az, itmp, 10); uarttransmits(itmp);
 
-	_delay_ms(100);
+	//_delay_ms(100);
 	#endif
 
 	#if MPU6050_GETATTITUDE == 1 || MPU6050_GETATTITUDE == 2
