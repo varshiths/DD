@@ -463,7 +463,7 @@ void mpu6050_init() {
 	#endif
 
 	//allow mpu6050 chip clocks to start up
-	//_delay_ms(100);
+	_delay_ms(2);
 
 	//set sleep disabled
 	mpu6050_setSleepDisabled();

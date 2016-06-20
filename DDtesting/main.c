@@ -20,6 +20,22 @@
 #include "i2chw/i2cmaster.h"
 #include "i2chw/twimastertimeout.c"
 
+int scaled(double reading, int i){
+	double l; double u;
+	switch(i){
+		case 0: l = 60; u = 150; break; 
+		case 1:	l = 70; u = 180; break;
+		case 2: l = 65; u = 120; break;
+		case 3: l = 75; u = 135; break;
+		default: break;
+	}
+	
+	if(reading < l) return 0;
+	if(reading > u) return 100;
+	
+	return ((reading - l)/(u-l))*100;
+}
+
 void uartinit (void)
 {
 	UBRR0H |= (unsigned char) (BAUDRATE>>8);
@@ -49,6 +65,7 @@ void adcinit(){
 	ADCSRA |= (1<<ADPS2); // prescaler to 16
 	ADMUX |= (1<<ADLAR); // left adjust
 	ADMUX &= ~((1<<REFS0)|(1<<REFS1));// reference voltage // refs0 = 0 and refs1 = 0
+	ADMUX |= (1<<REFS0);
 	
 }
 
@@ -71,11 +88,12 @@ void adcread(int pin){
 	while(ADCSRA & (1<<ADSC)){};
 }
 
-void adctransmit(){
+void adctransmit(int i){
 	while(ADCSRA & (1<<ADSC)){};
 	int p = ADCH;
+	int q = scaled(p,i);
 	char itmp[10];
-	itoa(p, itmp, 10); uarttransmits(itmp);
+	itoa(q, itmp, 10); uarttransmits(itmp);
 }
 
 
@@ -174,12 +192,17 @@ void mpu(int mode) {
 int main(void){
 	uartinit();
 	adcinit();
+	
+	//sei();
+
+	DDRD |= 1<<PIND4;
+	PORTD |= 1<<PIND4;
 		
 	while(1){
 		uarttransmit('#');
-		for (int i=0; i<5; i++)
+		for (int i=0; i<4; i++)
 		{
-			adcread(0); adctransmit();
+			adcread(i); adctransmit(i);
 			uarttransmit('+');
 		}
 		
