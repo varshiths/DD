@@ -23,10 +23,10 @@
 int scaled(double reading, int i){
 	double l; double u;
 	switch(i){
-		case 0: l = 60; u = 150; break; 
-		case 1:	l = 70; u = 180; break;
-		case 2: l = 65; u = 120; break;
-		case 3: l = 75; u = 135; break;
+		case 0: l = 65; u = 130; break; 
+		case 1:	l = 80; u = 170; break;
+		case 2: l = 70; u = 115; break;
+		case 3: l = 70; u = 125; break;
 		default: break;
 	}
 	
@@ -78,8 +78,13 @@ void adcread(int pin){
 		case 0:	ADMUX |= (0<<MUX0); break; //setting input pin to ADC0
 		case 1: ADMUX |= (1<<MUX0); break;
 		case 2: ADMUX |= (0<<MUX0)|(1<<MUX1); break;
-		case 3: ADMUX |= (1<<MUX0)|(1<<MUX1); break;
-		case 4: ADMUX |= (0<<MUX0)|(0<<MUX1)|(1<<MUX2); break;
+		case 3: ADMUX |= (1<<MUX0)|(1<<MUX1);
+					//PORTB &= ~((1<<PINB3)|(1<<PINB4)|(1<<PINB5));
+					break;
+		case 4: ADMUX |= (1<<MUX0)|(1<<MUX1);
+					//PORTB &= ~((1<<PINB3)|(1<<PINB4)|(1<<PINB5));
+					//PORTB |= (1<<PINB3);
+					break;
 		default: break;
 	}
 	ADCSRA |= (1<<ADEN); // enabling adc everytime read is done
@@ -91,9 +96,9 @@ void adcread(int pin){
 void adctransmit(int i){
 	while(ADCSRA & (1<<ADSC)){};
 	int p = ADCH;
-	int q = scaled(p,i);
+	//int q = scaled(p,i);
 	char itmp[10];
-	itoa(q, itmp, 10); uarttransmits(itmp);
+	itoa(p, itmp, 10); uarttransmits(itmp);
 }
 
 
@@ -195,8 +200,9 @@ int main(void){
 	
 	//sei();
 
-	DDRD |= 1<<PIND4;
-	PORTD |= 1<<PIND4;
+	DDRB |= (1<<PINB3)|(1<<PINB4)|(1<<PINB5); // selection pins MUX sensors 3 and 4
+	PORTB &= ~((1<<PINB3)|(1<<PINB4)|(1<<PINB5));
+	//PORTB |= (1<<PINB3);
 		
 	while(1){
 		uarttransmit('#');
